@@ -1,7 +1,7 @@
-📆 Events api
+#📆 Events api
 
 This is a RESTful API developed with NodeJS, Express, MySQL and React.
-🛠️Technologies used
+#🛠️Technologies used
 
     JavaScript
     Node.js
@@ -9,7 +9,7 @@ This is a RESTful API developed with NodeJS, Express, MySQL and React.
     MySQL
     React
 
-🗃️Database schema
+#🗃️Database schema
 
 The database consists of the following collections:
 Users
@@ -35,30 +35,30 @@ Event_volunteers
     user_id:	    INT NOT NULL
     registered_at:	TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     
-📥Instalation process
+#📥Instalation process
 
-# Clone the repository
+## Clone the repository
 
 git clone https://github.com/GMinettodev/events-api.git
 cd events-api
 
-# Install the dependencies
+## Install the dependencies
 
 npm install
 
-# Configure the web environment
+## Configure the web environment
 
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 
-# Edit the .env with the settings of your MySQL
+## Edit the .env with the settings of your MySQL
 
-# Create the database and the tables
+## Create the database and the tables
 
 mysql -u root
 source backend/src/database/create_database.sql
 source backend/src/database/create_tables.sql
 
-# Run the application
+## Run the application
 
 npm run dev
