@@ -1,0 +1,13 @@
+# Node Modules
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+#Frontend
+frontend/dist/
+
+# Backend
+backend/src/tests/
+
+#Root
+readme.md
