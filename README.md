@@ -60,6 +60,7 @@ cp frontend/.env.example frontend/.env
 mysql -u root
 source backend/src/database/create_database.sql
 source backend/src/database/create_tables.sql
+source backend/src/database/seed_data.sql
 
 ### Run the application
 

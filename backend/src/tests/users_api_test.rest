@@ -1,0 +1,52 @@
+@baseURL = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZvbHVudGVlckBleGFtcGxlLmNvbSIsInJvbGUiOiJ2b2x1bnRlZXIiLCJpYXQiOjE3NTg3MjA1MzUsImV4cCI6MTc1ODcyNDEzNX0.DZ7owTWIamOJwZTCBvc1YKbCHKYrcXS5Mby4L1SiAyk
+
+#########################
+##### Public routes #####
+#########################
+
+### Display Events
+GET {{baseURL}}/events/
+Content-Type: application/json
+
+### Admin user authentication
+POST {{baseURL}}/auth/login/
+Content-Type: application/json
+
+{
+"email": "admin@example.com",
+"password": "senha123"
+}
+
+### Volunteer user authentication
+POST {{baseURL}}/auth/login/
+Content-Type: application/json
+
+{
+"email": "volunteer@example.com",
+"password": "senha123"
+}
+
+##########################
+#### Protected routes ####
+##########################
+
+### Dashboard
+GET {{{{baseURL}}}}/dashboard
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Create Event
+POST {{baseURL}}/events/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Community Clean-up",
+  "description": "Join us to clean the neighborhood park.",
+  "date": "2025-10-01",
+  "location": "Central Park",
+  "max_volunteers": 100,
+  "created_by": 42
+}
+
