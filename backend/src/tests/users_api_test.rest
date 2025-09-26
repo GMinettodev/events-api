@@ -1,5 +1,5 @@
 @baseURL = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZvbHVudGVlckBleGFtcGxlLmNvbSIsInJvbGUiOiJ2b2x1bnRlZXIiLCJpYXQiOjE3NTg3MjA1MzUsImV4cCI6MTc1ODcyNDEzNX0.DZ7owTWIamOJwZTCBvc1YKbCHKYrcXS5Mby4L1SiAyk
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU4ODg2ODE2LCJleHAiOjE3NTg4OTA0MTZ9.xraxJEU9aLV-RzGqfd13MGmMRLQz_-3d76vNZNLGP7Q
 
 #########################
 ##### Public routes #####
@@ -46,7 +46,6 @@ Authorization: Bearer {{token}}
   "description": "Join us to clean the neighborhood park.",
   "date": "2025-10-01",
   "location": "Central Park",
-  "max_volunteers": 100,
-  "created_by": 42
+  "max_volunteers": "100"
 }
 
