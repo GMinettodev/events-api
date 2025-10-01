@@ -30,7 +30,14 @@ class UserService {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    return { token };
+    
+    return {
+      token,
+      user: {
+        email: user.email,
+        role: user.role,
+      },
+    };
   }
 }
 

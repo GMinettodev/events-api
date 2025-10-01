@@ -1,23 +1,22 @@
-export default function FormInput({
+export default function FormTextarea({
   label,
-  type = 'text',
+  name,
   value,
   onChange,
-  name,
-  placeholder,
   required,
+  placeholder,
 }) {
   return (
     <label className="form-group">
       <span className="form-label">{label}</span>
-      <input
+      <textarea
         className="form-input"
-        type={type}
         name={name}
         value={value}
-        placeholder={placeholder}
         onChange={onChange}
+        placeholder={placeholder}
         required={required}
+        rows={4}
       />
     </label>
   );

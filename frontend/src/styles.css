@@ -23,7 +23,8 @@ a {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
-/* NAVBAR */
+
+/* ===== NAVBAR ===== */
 .navbar {
   background: #333;
   color: #fff;
@@ -35,19 +36,22 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px; /* <-- espaço entre brand e lista */
+  gap: 40px;
 }
 .brand {
   font-weight: 700;
   color: #fff;
 }
-/* lista de links sempre com espaçamento interno */
 .nav-links {
   list-style: none;
   display: flex;
   gap: 32px;
   margin: 0;
   padding: 0;
+}
+.nav-links li {
+  display: flex;
+  align-items: center;
 }
 .nav-links a {
   color: #fff;
@@ -61,7 +65,8 @@ a {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-/* FOOTER centralizado consistente */
+
+/* ===== FOOTER ===== */
 .footer {
   background: transparent;
   border-top: 1px solid #e5e7eb;
@@ -73,7 +78,8 @@ a {
   text-align: center;
   color: #6b7280;
 }
-/* --- layout base do card (mantém o que você já tem) --- */
+
+/* ===== CARDS ===== */
 .card {
   background: #fff;
   border: 1px solid #e6e6e6;
@@ -84,17 +90,63 @@ a {
 .card h1 {
   margin: 0 0 16px;
 }
-/* --- estado de erro --- */
+
+/* ===== ALERTS ===== */
 .alert {
   background: #fdecef;
   color: #7a0619;
   border: 1px solid #f7c6cf;
   padding: 8px 10px;
   border-radius: 6px;
+  font-weight: bold;
 }
-/* =========================
-FORM "INLINE"
-========================= */
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 0.5rem 1rem;
+  background-color: #0057a3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 600;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+.btn:hover {
+  background-color: #004080;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background-color: #aaa;
+}
+
+/* ===== FORMS ===== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.form-label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+.form-input,
+textarea.form-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
 /* Form inline */
 .form.form--inline {
   display: flex;
@@ -125,28 +177,42 @@ FORM "INLINE"
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   outline: 0;
 }
-/* Botão verde compacto (coerente com o layout) */
-.btn {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 4px;
-  background: #2ea44f;
-  color: #fff;
-  border: 0;
+
+/* Form fullwidth */
+.form--fullwidth {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form--fullwidth .form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form--fullwidth .form-label {
   font-weight: 600;
+  margin-bottom: 0.4rem;
 }
-.btn:hover {
-  filter: brightness(0.95);
+.form--fullwidth .form-input,
+.form--fullwidth textarea.form-input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
 }
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.form--fullwidth .form-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  outline: none;
 }
-/* =========================
-RESPONSIVO (mobile)
-Empilha os campos e alinha à esquerda
-========================= */
-/* Mobile: empilhar campos */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
   .form.form--inline {
     display: grid;

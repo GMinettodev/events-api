@@ -1,17 +1,23 @@
-// Rota protegida por RequireAuth + RequireRole('admin').
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { http } from '../api/http';
+
 export default function Admin() {
   const [msg, setMsg] = useState('Carregando...');
+  const navigate = useNavigate();
+
   useEffect(() => {
     http
       .get('/protected/admin')
-      .then(({ data }) => setMsg(data.message)) // ex.: "Bem-vindo à área admin, email"
-      .catch(() => setMsg('Acesso negado'));
-  }, []);
+      .then(({ data }) => setMsg(data.message))
+      .catch(() => {
+        navigate('/forbidden');
+      });
+  }, [navigate]);
+
   return (
     <section className="card">
-      <h1>Área Administrativa</h1>
+      <h1>Admin area</h1>
       <p>{msg}</p>
     </section>
   );

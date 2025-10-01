@@ -32,6 +32,11 @@ class EventService {
 
     return insertedId;
   }
+
+  static async listEventsForDashboard() {
+    const events = await EventModel.getAllEventsWithUser();
+    return events;
+  }
 }
 
 module.exports = EventService;

@@ -1,16 +1,16 @@
-// Roteador principal: define rotas públicas, protegidas e o layout base.
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
+import { Navigate } from 'react-router-dom';
 import RequireAuth from './auth/RequireAuth';
 import RequireRole from './auth/RequireRole';
 import RootLayout from './layouts/RootLayout';
-import Home from './pages/Home';
-import About from './pages/About';
 import Login from './pages/Login';
-import Forbidden from './pages/Forbidden';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
-// (Opcional) Fallback simples para rotas inexistentes
+import Events from './pages/Events';
+import Forbidden from './pages/Forbidden';
+
+// Fallback for inexistent routes
 function NotFound() {
   return (
     <main className="container">
@@ -19,20 +19,17 @@ function NotFound() {
     </main>
   );
 }
-// Árvore de rotas aninhadas sob o RootLayout.
-// O <Outlet /> do RootLayout renderiza os filhos declarados em "children".
+
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    errorElement: <NotFound />, // opcional
+    errorElement: <NotFound />,
     children: [
-      // públicas
-      { index: true, element: <Home /> },
-      { path: 'about', element: <About /> },
+      { index: true, element: <Navigate to="/events" replace /> },
+      { path: 'events', element: <Events /> },
       { path: 'login', element: <Login /> },
       { path: 'forbidden', element: <Forbidden /> },
-      // protegida por autenticação (token)
       {
         path: 'dashboard',
         element: (
@@ -41,7 +38,6 @@ const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      // protegida por autenticação + papel específico (admin)
       {
         path: 'admin',
         element: (
@@ -52,14 +48,12 @@ const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      // fallback interno (opcional)
       { path: '*', element: <NotFound /> },
     ],
   },
 ]);
+
 export default function App() {
-  // O AuthProvider envolve o Router para que todas as rotas
-  // tenham acesso a user/token/login/logout via contexto.
   return (
     <AuthProvider>
       <RouterProvider router={router} />

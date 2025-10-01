@@ -32,6 +32,18 @@ class EventModel {
 
     return rows.insertId;
   }
+
+  static async getAllEventsWithUser() {
+    const [rows] = await db.query(`
+      SELECT 
+        e.id, e.title, e.description, e.date, e.location, e.max_volunteers, 
+        u.name AS created_by_name, u.email AS created_by_email
+      FROM events e
+      LEFT JOIN users u ON e.created_by = u.id
+      ORDER BY e.date ASC
+    `);
+    return rows;
+  }
 }
 
 module.exports = EventModel;

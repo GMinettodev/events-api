@@ -1,4 +1,3 @@
-// O RootLayout define a “casca” da aplicação: navbar fixa + área de conteúdo.
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 export default function RootLayout() {
@@ -10,7 +9,7 @@ export default function RootLayout() {
       </main>
       <footer className="footer">
         <div className="footer-inner">
-          © {new Date().getFullYear()} CorpApps • IFRS
+          © {new Date().getFullYear()} Gabriel Minetto Andreazza • IFRS
         </div>
       </footer>
     </>
