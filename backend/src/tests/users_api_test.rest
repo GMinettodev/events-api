@@ -1,5 +1,7 @@
 @baseURL = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU4ODg2ODE2LCJleHAiOjE3NTg4OTA0MTZ9.xraxJEU9aLV-RzGqfd13MGmMRLQz_-3d76vNZNLGP7Q
+@userId = 5
+@eventId = 7
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU5MzU4Njg2LCJleHAiOjE3NTkzNjIyODZ9.hdcGkQlKyxu7TDD3LxR6hWW90r5W8CC15WTSQ2PQ7Pc
 
 #########################
 ##### Public routes #####
@@ -27,14 +29,48 @@ Content-Type: application/json
 "password": "senha123"
 }
 
+### Register user
+POST {{baseURL}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com",  
+    "password": "senha123",
+    "role": "admin"
+}
+
+### Register user with invalid role
+POST {{baseURL}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "Jonathan Jones",
+    "email": "jonathan.jones@example.com",
+    "password": "senha123",
+    "role": "moderator"
+}
+
+### Register user with no role (will assign default "volunteer")
+POST {{baseURL}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "password": "senha123"
+}
+
 ##########################
 #### Protected routes ####
 ##########################
 
-### Dashboard
-GET {{{{baseURL}}}}/dashboard
-Content-Type: application/json
-Authorization: Bearer {{token}}
+# ### Dashboard
+# GET {{baseURL}}/dashboard
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+
+######### Events ########
 
 ### Create Event
 POST {{baseURL}}/events/
@@ -49,3 +85,31 @@ Authorization: Bearer {{token}}
   "max_volunteers": "100"
 }
 
+######### Users ########
+
+### Get users
+GET {{baseURL}}/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Get user by id
+GET {{baseURL}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Update user
+PUT {{baseURL}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Jane aaaaaa",
+  "email": "jane.3232@example.com",
+  "password": "newpassword123",
+  "role": "admin"
+}
+
+### Delete user
+DELETE {{baseURL}}/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
