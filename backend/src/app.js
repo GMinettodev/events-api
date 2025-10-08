@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
@@ -17,5 +18,6 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 app.use('/protected', dashboardRoutes);
+app.use('/admin', adminRoutes);
 
 module.exports = app;

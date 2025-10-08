@@ -9,6 +9,7 @@ CREATE TABLE
         role ENUM ('admin', 'volunteer') NOT NULL DEFAULT 'volunteer',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
 CREATE TABLE
     events (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,4 +21,15 @@ CREATE TABLE
         created_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+    );
+
+CREATE TABLE
+    event_volunteers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        event_id INT NOT NULL,
+        user_id INT NOT NULL,
+        registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+        UNIQUE (event_id, user_id)
     );
