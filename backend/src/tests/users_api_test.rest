@@ -1,7 +1,7 @@
 @baseURL = http://localhost:3000
-@userId = 5
+@userId = 10
 @eventId = 7
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU5MzU4Njg2LCJleHAiOjE3NTkzNjIyODZ9.hdcGkQlKyxu7TDD3LxR6hWW90r5W8CC15WTSQ2PQ7Pc
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwMzY4MDQ4LCJleHAiOjE3NjAzNzE2NDh9.HXKNBv7RsOBfPszm4aaNJm5R7v1N-Gxo6MSP1kwWoyw
 
 #########################
 ##### Public routes #####
@@ -80,7 +80,7 @@ Authorization: Bearer {{token}}
 {
   "title": "Community Clean-up",
   "description": "Join us to clean the neighborhood park.",
-  "date": "2025-10-01",
+  "date": "2025-10-20",
   "location": "Central Park",
   "max_volunteers": "100"
 }

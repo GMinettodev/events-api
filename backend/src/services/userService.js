@@ -62,22 +62,54 @@ class UserService {
     };
   }
 
+  // static async changeUser(id, user) {
+  //   const { name, email, password, role } = user;
+
+  //   const hashed = await bcrypt.hash(password, 10);
+
+  //   const result = await UserModel.update(id, {
+  //     name,
+  //     email,
+  //     password: hashed,
+  //     role,
+  //   });
+
+  //   // Validates the role only if it's provided
+  //   if (user.role && !UserService.isRoleValid(user.role)) {
+  //     throw createError(400, `Invalid role: ${role}`);
+  //   }
+
+  //   if (result.affectedRows === 0) {
+  //     throw createError(404, 'User not found');
+  //   }
+
+  //   return { message: 'User updated successfully', id };
+  // }
+
   static async changeUser(id, user) {
     const { name, email, password, role } = user;
 
-    const hashed = await bcrypt.hash(password, 10);
-
-    const result = await UserModel.update(id, {
-      name,
-      email,
-      password: hashed,
-      role,
-    });
-
-    // Validates the role only if it's provided
-    if (user.role && !UserService.isRoleValid(user.role)) {
+    // Validate role first
+    if (role && !UserService.isRoleValid(role)) {
       throw createError(400, `Invalid role: ${role}`);
     }
+
+    let hashed;
+    if (password) {
+      hashed = await bcrypt.hash(password, 10);
+    }
+
+    // Update object
+    const updateData = {
+      name,
+      email,
+      role,
+    };
+    if (hashed) {
+      updateData.password = hashed;
+    }
+
+    const result = await UserModel.update(id, updateData);
 
     if (result.affectedRows === 0) {
       throw createError(404, 'User not found');

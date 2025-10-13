@@ -11,9 +11,7 @@ class UserModel {
   }
 
   static async findAll() {
-    const [rows] = await db.query(
-      'SELECT id, name, email, role FROM users'
-    );
+    const [rows] = await db.query('SELECT id, name, email, role FROM users');
     return rows;
   }
 
@@ -29,20 +27,38 @@ class UserModel {
     return rows[0];
   }
 
+  // static async update(id, user) {
+  //   const { name, email, password, phone, role } = user;
+  //   const [rows] = await db.query(
+  //     'UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id =  ?',
+  //     [name, email, password, role, id]
+  //   );
+  //   return rows;
+  // }
   static async update(id, user) {
-    const { name, email, password, phone, role } = user;
-    const [rows] = await db.query(
-      'UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id =  ?',
-      [name, email, password, role, id]
-    );
-    return rows;
+    const { name, email, password, role } = user;
+
+    if (password) {
+      // update including password
+      const [rows] = await db.query(
+        'UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id = ?',
+        [name, email, password, role, id]
+      );
+      return rows;
+    } else {
+      // update without password
+      const [rows] = await db.query(
+        'UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?',
+        [name, email, role, id]
+      );
+      return rows;
+    }
   }
 
   static async delete(id) {
     const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
     return result;
   }
-  
 }
 
 module.exports = UserModel;

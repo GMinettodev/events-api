@@ -1,21 +1,25 @@
 import { useState, useEffect } from 'react';
 import { http } from '../api/http';
 import EventForm from '../components/EventForm';
+import UserList from '../components/Admin/UserList';
+import UserForm from '../components/Admin/UserForm';
+import EventList from '../components/Admin/EventList';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
+  const [showUserCreateForm, setShowUserCreateForm] = useState(false);
   const [userEditData, setUserEditData] = useState({
     name: '',
     email: '',
-    role: '',
+    role: 'volunteer',
+    password: '',
   });
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch users and events on mount
   useEffect(() => {
     fetchUsers();
     fetchEvents();
@@ -24,26 +28,13 @@ export default function Admin() {
   async function fetchUsers() {
     try {
       setLoading(true);
-      const { data } = await http.get('/admin/users');
+      const { data } = await http.get('/users');
       setUsers(data);
     } catch {
-      setMessage({ type: 'error', text: 'Erro ao carregar usuários.' });
+      setMessage({ type: 'error', text: 'Error loading users.' });
     } finally {
       setLoading(false);
     }
-  }
-
-  async function formatDate(dateString) {
-    const date = new Date(dateString);
-    return (
-      date.toLocaleDateString('pt-BR') +
-      ' ' +
-      date.toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-    );
   }
 
   async function fetchEvents() {
@@ -52,250 +43,198 @@ export default function Admin() {
       const { data } = await http.get('/events');
       setEvents(data);
     } catch {
-      setMessage({ type: 'error', text: 'Erro ao carregar eventos.' });
+      setMessage({ type: 'error', text: 'Error loading events.' });
     } finally {
       setLoading(false);
     }
   }
 
-  // Create event
+  // Event form handlers
   async function createEvent(formData) {
     setMessage(null);
     try {
       setLoading(true);
       await http.post('/events', formData);
-      setMessage({ type: 'success', text: 'Evento criado com sucesso!' });
+      setMessage({ type: 'success', text: 'Event created successfully!' });
       setShowEventForm(false);
       fetchEvents();
     } catch {
-      setMessage({ type: 'error', text: 'Erro ao criar evento.' });
+      setMessage({ type: 'error', text: 'Error creating event.' });
     } finally {
       setLoading(false);
     }
   }
 
-  // Edit user handlers
+  // User form handlers (edit and create)
   function startEditing(user) {
     setEditingUserId(user.id);
-    setUserEditData({ name: user.name, email: user.email, role: user.role });
+    setShowUserCreateForm(false);
+    setShowEventForm(false);
+    setUserEditData({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      password: '',
+    });
   }
 
-  function cancelEditing() {
+  function startCreatingUser() {
     setEditingUserId(null);
-    setUserEditData({ name: '', email: '', role: '' });
+    setShowEventForm(false);
+    setShowUserCreateForm(true);
+    setUserEditData({
+      name: '',
+      email: '',
+      role: 'volunteer',
+      password: '',
+    });
+  }
+
+  function cancelUserForm() {
+    setEditingUserId(null);
+    setShowUserCreateForm(false);
+    setUserEditData({
+      name: '',
+      email: '',
+      role: 'volunteer',
+      password: '',
+    });
   }
 
   async function saveUser() {
     setMessage(null);
     try {
       setLoading(true);
-      await http.put(`/admin/users/${editingUserId}`, userEditData);
-      setMessage({ type: 'success', text: 'Usuário atualizado com sucesso!' });
+      const payload = { ...userEditData };
+      if (!payload.password) {
+        delete payload.password;
+      }
+      await http.put(`/users/${editingUserId}`, payload);
+      setMessage({ type: 'success', text: 'User updated successfully!' });
       setEditingUserId(null);
       fetchUsers();
     } catch {
-      setMessage({ type: 'error', text: 'Erro ao atualizar usuário.' });
+      setMessage({ type: 'error', text: 'Error updating user.' });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function createUser() {
+    setMessage(null);
+    try {
+      setLoading(true);
+      await http.post('/auth/register', userEditData);
+      setMessage({ type: 'success', text: 'User created successfully!' });
+      setShowUserCreateForm(false);
+      fetchUsers();
+    } catch {
+      setMessage({ type: 'error', text: 'Error creating user.' });
     } finally {
       setLoading(false);
     }
   }
 
   async function deleteUser(id) {
-    if (!window.confirm('Tem certeza que deseja excluir este usuário?')) return;
+    if (!window.confirm('Are you sure you want to delete this user?')) return;
     setMessage(null);
     try {
       setLoading(true);
-      await http.delete(`/admin/users/${id}`);
-      setMessage({ type: 'success', text: 'Usuário excluído com sucesso!' });
+      await http.delete(`/users/${id}`);
+      setMessage({ type: 'success', text: 'User deleted successfully!' });
       fetchUsers();
     } catch {
-      setMessage({ type: 'error', text: 'Erro ao excluir usuário.' });
+      setMessage({ type: 'error', text: 'Error deleting user.' });
     } finally {
       setLoading(false);
     }
   }
 
+  const isEditing = editingUserId !== null;
+  const isShowingEventForm = showEventForm;
+  const isCreatingUser = showUserCreateForm;
+
+  const isFormActive = isEditing || isShowingEventForm || isCreatingUser;
+
   return (
     <section className="card" style={{ maxWidth: 900, margin: '2rem auto' }}>
-      <h1>Administração</h1>
+      <h1>Admin Panel</h1>
 
       {message && (
         <div
           className={`alert ${message.type === 'error' ? '' : 'alert-success'}`}
+          style={{ marginBottom: '1rem' }}
         >
           {message.text}
         </div>
       )}
 
-      {/* Event creation */}
-      <div style={{ marginBottom: '2rem' }}>
-        <button
-          className="btn"
-          onClick={() => setShowEventForm((v) => !v)}
-          disabled={loading}
-          aria-expanded={showEventForm}
-        >
-          {showEventForm ? 'Fechar formulário' : 'Criar novo evento'}
-        </button>
+      {/* User Create Form */}
+      {isCreatingUser && (
+        <UserForm
+          formTitle="Create New User"
+          userData={userEditData}
+          onChange={setUserEditData}
+          onSubmit={createUser}
+          onCancel={cancelUserForm}
+          loading={loading}
+          submitLabel="Create User"
+          showPasswordRequired={true}
+        />
+      )}
 
-        {showEventForm && (
+      {/* User Edit Form */}
+      {isEditing && (
+        <UserForm
+          formTitle="Edit User"
+          userData={userEditData}
+          onChange={setUserEditData}
+          onSubmit={saveUser}
+          onCancel={cancelUserForm}
+          loading={loading}
+          submitLabel="Save"
+          showPasswordRequired={false}
+        />
+      )}
+
+      {/* Event Form */}
+      {isShowingEventForm && (
+        <>
+          <button
+            className="btn"
+            onClick={() => setShowEventForm(false)}
+            disabled={loading}
+            type="button"
+            style={{ marginBottom: '1rem' }}
+          >
+            Close Event Form
+          </button>
+
           <EventForm
             onSubmit={createEvent}
             onCancel={() => setShowEventForm(false)}
           />
-        )}
-      </div>
+        </>
+      )}
 
-      {/* Users Table */}
-      <h2>Gerenciar Usuários</h2>
+      {/* Show tables and create buttons only if no form active */}
+      {!isFormActive && (
+        <>
+          <UserList
+            users={users}
+            onEdit={startEditing}
+            onDelete={deleteUser}
+            onCreate={startCreatingUser}
+            loading={loading}
+          />
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Nome</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Email</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Função</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.length === 0 && (
-            <tr>
-              <td colSpan="4" style={{ padding: '12px', textAlign: 'center' }}>
-                Nenhum usuário encontrado.
-              </td>
-            </tr>
-          )}
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td style={{ padding: '8px' }}>
-                {editingUserId === user.id ? (
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={userEditData.name}
-                    onChange={(e) =>
-                      setUserEditData({ ...userEditData, name: e.target.value })
-                    }
-                    disabled={loading}
-                  />
-                ) : (
-                  user.name
-                )}
-              </td>
-              <td style={{ padding: '8px' }}>
-                {editingUserId === user.id ? (
-                  <input
-                    type="email"
-                    className="form-input"
-                    value={userEditData.email}
-                    onChange={(e) =>
-                      setUserEditData({
-                        ...userEditData,
-                        email: e.target.value,
-                      })
-                    }
-                    disabled={loading}
-                  />
-                ) : (
-                  user.email
-                )}
-              </td>
-              <td style={{ padding: '8px' }}>
-                {editingUserId === user.id ? (
-                  <select
-                    className="form-input"
-                    value={userEditData.role}
-                    onChange={(e) =>
-                      setUserEditData({ ...userEditData, role: e.target.value })
-                    }
-                    disabled={loading}
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                ) : (
-                  user.role
-                )}
-              </td>
-              <td style={{ padding: '8px' }}>
-                {editingUserId === user.id ? (
-                  <>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={cancelEditing}
-                      disabled={loading}
-                      type="button"
-                      style={{ marginRight: '0.5rem' }}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      className="btn"
-                      onClick={saveUser}
-                      disabled={loading}
-                      type="button"
-                    >
-                      Salvar
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => startEditing(user)}
-                      disabled={loading}
-                      type="button"
-                      style={{ marginRight: '0.5rem' }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn"
-                      onClick={() => deleteUser(user.id)}
-                      disabled={loading}
-                      type="button"
-                    >
-                      Excluir
-                    </button>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Events Table */}
-      <h2 style={{ marginTop: '3rem' }}>Eventos</h2>
-
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Título</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Data</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Localização</th>
-            <th style={{ textAlign: 'left', padding: '8px' }}>Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.length === 0 && (
-            <tr>
-              <td colSpan="4" style={{ padding: '12px', textAlign: 'center' }}>
-                Nenhum evento encontrado.
-              </td>
-            </tr>
-          )}
-          {events.map((event) => (
-            <tr key={event.id}>
-              <td style={{ padding: '8px' }}>{event.title}</td>
-              <td style={{ padding: '8px' }}>{event.date}</td>
-              <td style={{ padding: '8px' }}>{event.location || '-'}</td>
-              <td style={{ padding: '8px' }}>{event.description || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          <EventList
+            events={events}
+            onCreate={() => setShowEventForm(true)}
+            loading={loading}
+          />
+        </>
+      )}
     </section>
   );
 }

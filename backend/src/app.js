@@ -18,6 +18,6 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 app.use('/protected', dashboardRoutes);
-app.use('/admin', adminRoutes);
+// app.use('/admin', adminRoutes);
 
 module.exports = app;
