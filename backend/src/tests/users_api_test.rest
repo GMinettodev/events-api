@@ -1,7 +1,7 @@
 @baseURL = http://localhost:3000
 @userId = 10
 @eventId = 7
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwMzY4MDQ4LCJleHAiOjE3NjAzNzE2NDh9.HXKNBv7RsOBfPszm4aaNJm5R7v1N-Gxo6MSP1kwWoyw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwNDQzODUxLCJleHAiOjE3NjA0NDc0NTF9.5OcR8CWaFjSBrAoEAPMHQJ3QMR13A3GE7Qq3cN35FbE
 
 #########################
 ##### Public routes #####
@@ -32,7 +32,7 @@ Content-Type: application/json
 ### Register user
 POST {{baseURL}}/auth/register
 Content-Type: application/json
-
+'""
 {
     "name": "Jane Doe",
     "email": "jane.doe@example.com",  
@@ -72,6 +72,10 @@ Content-Type: application/json
 
 ######### Events ########
 
+### Get event
+GET {{baseURL}}/events/
+Content-Type: application/json
+
 ### Create Event
 POST {{baseURL}}/events/
 Content-Type: application/json
@@ -84,6 +88,24 @@ Authorization: Bearer {{token}}
   "location": "Central Park",
   "max_volunteers": "100"
 }
+
+### Update event
+PUT {{baseURL}}/events/{{eventId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated Community Clean-up",
+  "description": "Join us to clean the downtown park.",
+  "date": "2025-10-22",
+  "location": "Downtown Park",
+  "max_volunteers": 120
+}
+
+### Delete event
+DELETE {{baseURL}}/events/{{eventId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ######### Users ########
 

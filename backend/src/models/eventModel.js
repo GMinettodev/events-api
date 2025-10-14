@@ -14,20 +14,11 @@ class EventModel {
       location,
       max_volunteers = 50,
       created_by,
-      created_at,
     } = event;
 
     const [rows] = await db.query(
-      'INSERT INTO events (title, description, date, location, max_volunteers, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [
-        title,
-        description,
-        date,
-        location,
-        max_volunteers,
-        created_by,
-        created_at,
-      ]
+      'INSERT INTO events (title, description, date, location, max_volunteers, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
+      [title, description, date, location, max_volunteers, created_by]
     );
 
     return rows.insertId;
@@ -43,6 +34,27 @@ class EventModel {
       ORDER BY e.date ASC
     `);
     return rows;
+  }
+
+  static async findById(id) {
+    const [rows] = await db.query('SELECT * FROM events WHERE id = ?', [id]);
+    return rows[0];
+  }
+
+  static async update(id, event) {
+    const { title, description, date, location, max_volunteers } = event;
+
+    const [rows] = await db.query(
+      'UPDATE events SET title = ?, description = ?, date = ?, location = ?, max_volunteers = ? WHERE id = ?',
+      [title, description, date, location, max_volunteers, id]
+    );
+
+    return rows;
+  }
+
+  static async delete(id) {
+    const [result] = await db.query('DELETE FROM events WHERE id = ?', [id]);
+    return result;
   }
 }
 

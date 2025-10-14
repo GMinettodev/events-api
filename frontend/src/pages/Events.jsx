@@ -1,46 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../auth/UseAuth';
 import { http } from '../api/http';
 
-export default function Events() {
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const d = new Date(dateStr);
+  return isNaN(d) ? 'Invalid Date' : d.toLocaleDateString('en-US', options);
+};
+
+export default function Dashboard() {
+  const { user } = useAuth();
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     http
-      .get('/events')
-      .then(({ data }) => {
-        setEvents(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError('Error loading events');
-        setLoading(false);
-      });
+      .get('/protected/dashboard')
+      .then(({ data }) => setEvents(data))
+      .catch(() => setEvents([]));
   }, []);
 
-  if (loading) return <p>Loading events...</p>;
-  if (error) return <p>{error}</p>;
-
-  if (events.length === 0) return <p>No available events at the moment.</p>;
-
   return (
-    <section className="card">
-      <h1>Volnteer events</h1>
-      <ul>
-        {events.map(({ id, title, description, date, location }) => (
-          <li key={id} style={{ marginBottom: '1.5rem' }}>
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <p>
-              <strong>Date:</strong> {new Date(date).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Place:</strong> {location}
-            </p>
-          </li>
-        ))}
-      </ul>
+    <section className="card dashboard">
+      <h1 className="dashboard-header">Volunteer Events</h1>
+
+      {events.length > 0 ? (
+        <ul className="event-list">
+          {events.map((event) => (
+            <li key={event.id} className="event-item">
+              <h2 className="event-title">{event.title}</h2>
+              <p className="event-details">
+                📅 {formatDate(event.date)} &nbsp;&middot;&nbsp; 📍{' '}
+                {event.location || 'TBD'}
+              </p>
+              <p className="event-creator">
+                Created by: {event.created_by_name || 'Unknown'}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="no-events-message">No events available.</p>
+      )}
     </section>
   );
 }

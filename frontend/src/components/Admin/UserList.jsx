@@ -44,13 +44,12 @@ export default function UserList({
               <td className="table-cell">{user.name}</td>
               <td className="table-cell">{user.email}</td>
               <td className="table-cell">{user.role}</td>
-              <td className="table-cell">
+              <td className="table-cell table-actions">
                 <button
                   className="btn btn-edit"
                   onClick={() => onEdit(user)}
                   disabled={loading}
                   type="button"
-                  style={{ marginRight: '0.5rem' }}
                 >
                   Edit
                 </button>
@@ -62,6 +61,7 @@ export default function UserList({
                 >
                   Delete
                 </button>
+                
               </td>
             </tr>
           ))}

@@ -1,24 +1,29 @@
 import React from 'react';
 
-// Function to format the event date
 const formatDate = (date) => {
-  if (!date) return '-'; // Handle empty or invalid dates
+  if (!date) return '-';
   const options = {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   };
-  const eventDate = new Date(date);
-  if (isNaN(eventDate)) return 'Invalid Date'; // Handle invalid date
-  return eventDate.toLocaleDateString('en-US', options);
+  const d = new Date(date);
+  if (isNaN(d)) return 'Invalid Date';
+  return d.toLocaleDateString('en-US', options);
 };
 
-export default function EventList({ events, onCreate, loading }) {
+export default function EventList({
+  events,
+  onEdit,
+  onDelete,
+  onCreate,
+  loading,
+}) {
   return (
     <>
       <div className="flex-container">
-        <h2>Events</h2>
+        <h2>Manage Events</h2>
         <button
           onClick={onCreate}
           className="btn btn-success"
@@ -26,7 +31,7 @@ export default function EventList({ events, onCreate, loading }) {
           type="button"
           disabled={loading}
         >
-          Create event
+          Add Event
         </button>
       </div>
 
@@ -37,12 +42,13 @@ export default function EventList({ events, onCreate, loading }) {
             <th className="table-header">Date</th>
             <th className="table-header">Location</th>
             <th className="table-header">Description</th>
+            <th className="table-header">Actions</th>
           </tr>
         </thead>
         <tbody>
           {events.length === 0 && (
             <tr>
-              <td colSpan="4" className="no-events-message">
+              <td colSpan="5" className="no-events-message">
                 No events found.
               </td>
             </tr>
@@ -50,10 +56,27 @@ export default function EventList({ events, onCreate, loading }) {
           {events.map((event) => (
             <tr key={event.id}>
               <td className="table-cell">{event.title}</td>
-              <td className="table-cell">{formatDate(event.date)}</td>{' '}
-              {/* Format the date */}
+              <td className="table-cell">{formatDate(event.date)}</td>
               <td className="table-cell">{event.location || '-'}</td>
               <td className="table-cell">{event.description || '-'}</td>
+              <td className="table-cell table-actions">
+                <button
+                  className="btn btn-edit"
+                  onClick={() => onEdit(event)}
+                  disabled={loading}
+                  type="button"
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-delete"
+                  onClick={() => onDelete(event.id)}
+                  disabled={loading}
+                  type="button"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

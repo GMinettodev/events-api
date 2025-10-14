@@ -8,12 +8,25 @@ const router = express.Router();
 
 // Public routes
 router.get('/', EventController.getEvents);
-// Admin Only
+
+//Protected routes
 router.post(
   '/',
   authenticateToken,
   authorizeRole('admin'),
   EventController.createEvent
+);
+router.put(
+  '/:id',
+  authenticateToken,
+  authorizeRole('admin'),
+  EventController.updateEvent
+);
+router.delete(
+  '/:id',
+  authenticateToken,
+  authorizeRole('admin'),
+  EventController.deleteEvent
 );
 
 module.exports = router;
