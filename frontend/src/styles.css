@@ -1,7 +1,8 @@
-/* ===== Base ===== */
+/* ===== Reset & Base ===== */
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family:
@@ -15,10 +16,12 @@ body {
   color: #1f2937;
   line-height: 1.5;
 }
+
 a {
   color: inherit;
   text-decoration: none;
 }
+
 :focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
@@ -29,6 +32,7 @@ a {
   background: #333;
   color: #fff;
 }
+
 .navbar-inner {
   max-width: 1000px;
   margin: 0 auto;
@@ -38,10 +42,12 @@ a {
   justify-content: center;
   gap: 40px;
 }
+
 .brand {
   font-weight: 700;
   color: #fff;
 }
+
 .nav-links {
   list-style: none;
   display: flex;
@@ -49,18 +55,21 @@ a {
   margin: 0;
   padding: 0;
 }
+
 .nav-links li {
   display: flex;
   align-items: center;
 }
+
 .nav-links a {
   color: #fff;
-  text-decoration: none;
   font-weight: 500;
 }
+
 .nav-links a:hover {
   opacity: 0.85;
 }
+
 .nav-links a.active {
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -68,9 +77,10 @@ a {
 
 /* ===== FOOTER ===== */
 .footer {
-  background: transparent;
   border-top: 1px solid #e5e7eb;
+  background: transparent;
 }
+
 .footer-inner {
   max-width: 1000px;
   margin: 0 auto;
@@ -87,6 +97,7 @@ a {
   padding: 20px 24px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
+
 .card h1 {
   margin: 0 0 16px;
 }
@@ -101,8 +112,7 @@ a {
   font-weight: bold;
 }
 
-/* ===== FORM CONTAINER ===== */
-
+/* ===== FORM CONTAINER & FORMS ===== */
 .form-container {
   padding: 1rem;
   border: 1px solid #ccc;
@@ -113,11 +123,13 @@ a {
   margin-bottom: 1rem;
 }
 
-.form-group label {
+.form-label {
   display: block;
   margin-bottom: 0.3rem;
+  font-weight: bold;
 }
 
+/* ===== FORM INPUTS ===== */
 .form-input {
   width: 100%;
   padding: 8px;
@@ -126,25 +138,26 @@ a {
   border: 1px solid #ccc;
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
+.form-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: 0;
 }
 
+/* ===== BUTTONS ===== */
 .btn {
   padding: 0.5rem 1rem;
   background-color: #0057a3;
-  color: white;
+  color: #fff;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0.5rem;
   font-weight: 600;
   height: 40px;
   display: inline-flex;
   align-items: center;
+  transition: background-color 0.2s ease;
+  margin: 0 0.3rem;
 }
 
 .btn:hover {
@@ -156,33 +169,41 @@ a {
   cursor: not-allowed;
 }
 
+/* Button variants */
 .btn-secondary {
   background-color: #aaa;
 }
 
 .btn-success {
-  background-color: #28a745; /* Green color */
-  color: white;
+  background-color: #28a745;
+  color: #fff;
 }
 
 .btn-success:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838;
 }
 
-.btn-danger {
-  background-color: #dc3545; /* Red color */
-  color: white;
+.btn-delete {
+  background-color: #dc3545;
 }
 
-.btn-danger:hover {
-  background-color: #c82333; /* Darker red on hover */
+.btn-delete:hover {
+  background-color: #c82333;
 }
 
-/* ===== TABLE STYLES ===== */
+.btn-edit {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+/* ===== TABLES ===== */
 .table-container {
   width: 100%;
   border-collapse: collapse;
-  /* width: 100%; */
 }
 
 .table-container th,
@@ -191,16 +212,17 @@ a {
   text-align: left;
 }
 
-.table-container td[colspan='4'] {
-  padding: 12px;
-  text-align: center;
-}
-
 .table-container th {
   background-color: #f4f4f4;
   border-bottom: 1px solid #ddd;
 }
 
+.table-container td[colspan='4'] {
+  padding: 12px;
+  text-align: center;
+}
+
+/* Action Buttons in Tables */
 .table-actions {
   display: flex;
   gap: 0.5rem;
@@ -211,27 +233,19 @@ a {
 }
 
 .table-actions button {
-  margin-right: 0.5rem; /* space between buttons */
+  margin-right: 0.5rem;
 }
 
 .table-actions button:last-child {
-  margin-right: 0; /* no extra space after last button */
+  margin-right: 0;
 }
 
-/* UserList specific adjustments */
+/* User List specific adjustments for action buttons */
 .user-table .table-actions {
-  white-space: nowrap; /* No wrapping */
-  width: 1%; /* Shrink to fit */
-  padding-right: 0.5rem; /* Minimal right padding */
-  text-align: right; /* Align buttons to right */
-}
-
-.user-table .table-actions button {
-  margin-right: 0.5rem; /* Space between buttons */
-}
-
-.user-table .table-actions button:last-child {
-  margin-right: 0; /* No margin after last button */
+  white-space: nowrap;
+  width: 1%;
+  padding-right: 0.5rem;
+  text-align: right;
 }
 
 /* ===== FLEX CONTAINER ===== */
@@ -243,146 +257,58 @@ a {
   margin-bottom: 1rem;
 }
 
-/* ===== FORM STYLES (Universal) ===== */
-.form-label {
-  font-weight: bold;
-  margin-bottom: 0.3rem;
-}
-
-.form-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-  outline: 0;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-/* ===== BUTTONS ===== */
-.btn {
-  padding: 0.5rem 1rem;
-  background-color: #0057a3;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: 600;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-}
-
-.btn:hover {
-  background-color: #004080;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: #aaa;
-}
-
-.btn-success {
-  background-color: #28a745; /* Green color */
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #218838; /* Darker green on hover */
-}
-
-.btn-delete {
-  background-color: #dc3545; /* Red color */
-  color: white;
-}
-
-.btn-delete:hover {
-  background-color: #c82333; /* Darker red on hover */
-}
-
-/* Yellow Button for Edit */
-.btn-edit {
-  background-color: #ffc107; /* Yellow color */
-  color: black;
-}
-
-.btn-edit:hover {
-  background-color: #e0a800; /* Darker yellow on hover */
-}
-
-/* ===== FORMS ===== */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.form-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.form-label {
-  font-weight: bold;
-  margin-bottom: 0.3rem;
-}
-.form-input,
-textarea.form-input {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
-/* Form inline */
-.form.form--inline {
+/* ===== FORMS (Inline & Fullwidth) ===== */
+.form--inline {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
+
 .form--inline .form-group {
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 0;
 }
+
 .form--inline .form-label {
   font-size: 0.95rem;
-  color: #374151;
-  min-width: 64px;
-  text-align: right;
+  min-width: auto;
+  text-align: left;
+  font-weight: normal;
+  margin-bottom: 0;
 }
+
 .form--inline .form-input {
   width: 240px;
   padding: 8px 10px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
 }
+
 .form--inline .form-input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   outline: 0;
 }
 
-/* Form fullwidth */
 .form--fullwidth {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
 .form--fullwidth .form-group {
   display: flex;
   flex-direction: column;
 }
+
 .form--fullwidth .form-label {
   font-weight: 600;
   margin-bottom: 0.4rem;
 }
+
 .form--fullwidth .form-input,
 .form--fullwidth textarea.form-input {
   width: 100%;
@@ -391,26 +317,18 @@ textarea.form-input {
   border: 1px solid #e5e7eb;
   border-radius: 4px;
 }
+
 .form--fullwidth .form-input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   outline: none;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
-  .form.form--inline {
+  .form--inline {
     display: grid;
     gap: 12px;
-  }
-  .form--inline .form-group {
-    justify-content: flex-start;
   }
   .form--inline .form-label {
     min-width: auto;
@@ -421,6 +339,7 @@ textarea.form-input {
   }
 }
 
+/* ===== DASHBOARD & EVENTS ===== */
 .dashboard {
   max-width: 800px;
   margin: 2rem auto;
@@ -430,7 +349,6 @@ textarea.form-input {
 .dashboard-header {
   border-bottom: 2px solid #007bff;
   padding-bottom: 0.5rem;
-  margin: 0;
   font-size: 2rem;
   color: #222;
 }
@@ -446,8 +364,8 @@ textarea.form-input {
   margin-bottom: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.3s ease;
   cursor: default;
 }

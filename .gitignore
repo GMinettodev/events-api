@@ -143,4 +143,4 @@ backend/.env
 frontend/.env
 
 # jsdoc
-backend/doc
+backend/docs

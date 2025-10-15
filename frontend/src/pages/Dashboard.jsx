@@ -22,7 +22,7 @@ export default function Dashboard() {
 
   return (
     <section className="card dashboard">
-      <h1 className="dashboard-header">Welcome, {user?.name || 'User'}!</h1>
+      <h1 className="dashboard-header">Dashboard</h1>
 
       {events.length > 0 ? (
         <ul className="event-list">
