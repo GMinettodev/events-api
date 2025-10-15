@@ -1,8 +1,8 @@
 # 📆 Events api
 
-This is a RESTful API developed with NodeJS, Express, MySQL and React.
+This is a RESTful API developed with NodeJS, Express, MySQL and React. It enables you to deal with the management of events and volunteers.
 
-## 🛠️Technologies used
+##  🛠️Technologies used
 
     JavaScript
     Node.js
@@ -30,13 +30,7 @@ The database consists of the following collections:
     date:	        DATE NOT NULL
     max_volunteers:	INT DEFAULT 50
     created_at:	    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    
-### Event_volunteers
-    id:	            INT AUTO_INCREMENT PRIMARY KEY
-    event_id:	    INT NOT NULL
-    user_id:	    INT NOT NULL
-    registered_at:	TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    
+
 ## 📥Instalation process
 
 ### Clone the repository
@@ -65,3 +59,13 @@ source backend/src/database/seed_data.sql
 ### Run the application
 
 npm run dev
+
+
+## 📑 Documentation
+
+To access the JSDocs you must enter on the backend folder and run:
+    npm run docs
+Then open the index.html on your browser.
+
+To access the Swagger documentation you must start your server and enter the route:
+    /api-docs
