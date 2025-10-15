@@ -64,8 +64,10 @@ npm run dev
 ## 📑 Documentation
 
 To access the JSDocs you must enter on the backend folder and run:
+
     npm run docs
 Then open the index.html on your browser.
 
 To access the Swagger documentation you must start your server and enter the route:
+   
     /api-docs
