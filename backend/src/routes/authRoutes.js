@@ -37,6 +37,8 @@ const router = express.Router();
  *         description: Internal server error.
  */
 
+router.post('/login', UserController.login);
+
 /**
  * @swagger
  * /register:
@@ -68,8 +70,6 @@ const router = express.Router();
  *       500:
  *         description: Internal server error.
  */
-
-router.post('/login', UserController.login);
 router.post('/register', UserController.register);
 
 module.exports = router;

@@ -13,7 +13,7 @@ const options = {
       },
     ],
   },
-  // Arquivos onde vamos anotar os endpoints (podem ser rotas separadas)
+
   apis: ['./src/routes/*.js'],
 };
 // ../routes/*.js
