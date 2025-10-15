@@ -1,0 +1,16 @@
+{
+  "source": {
+    "include": ["./src/models", "./src/services", "./src/controllers"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules|docs|test)"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true
+  },
+  "plugins": [],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}

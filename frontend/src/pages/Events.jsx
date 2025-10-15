@@ -15,7 +15,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     http
-      .get('/protected/dashboard')
+      .get('/events')
       .then(({ data }) => setEvents(data))
       .catch(() => setEvents([]));
   }, []);

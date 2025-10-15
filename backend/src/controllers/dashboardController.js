@@ -1,4 +1,14 @@
+/**
+ * Controller responsible for handling requests related to the user dashboard.
+ */
 class DashboardController {
+  /**
+   * Retrieves dashboard information for the authenticated user.
+   * Requires user authentication.
+   * @param {Object} req - Express request object, expects user info in req.user.
+   * @param {Object} res - Express response object.
+   * @param {Function} next - Express next middleware function.
+   */
   static async getDashboard(req, res, next) {
     try {
       const user = req.user;

@@ -1,7 +1,7 @@
 @baseURL = http://localhost:3000
-@userId = 10
+@userId = 6
 @eventId = 7
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwNDQzODUxLCJleHAiOjE3NjA0NDc0NTF9.5OcR8CWaFjSBrAoEAPMHQJ3QMR13A3GE7Qq3cN35FbE
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwNDk4NzY1LCJleHAiOjE3NjA1MDIzNjV9.9ZGJ11myAGVU1X--npf37LcSZhdpZkvSyKt3lckws88
 
 #########################
 ##### Public routes #####
