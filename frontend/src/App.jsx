@@ -14,8 +14,8 @@ import Forbidden from './pages/Forbidden';
 function NotFound() {
   return (
     <main className="container">
-      <h1>404 — Página não encontrada</h1>
-      <p>Verifique a URL ou volte para a Home.</p>
+      <h1>404 — Page not found</h1>
+      <p>Verify the URL or go back to Home.</p>
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import FormInput from './FormInput';
-import FormTextarea from './FormTextarea'; // Optional: use if you want to replace description input with a textarea
+import FormTextarea from './FormTextarea';
 
 export default function EventForm({ onSubmit, onCancel }) {
   const [form, setForm] = useState({
@@ -45,7 +45,6 @@ export default function EventForm({ onSubmit, onCancel }) {
         required
       />
 
-      {/* Replace this with FormTextarea if preferred */}
       <FormInput
         label="Description"
         name="description"

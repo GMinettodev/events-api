@@ -8,7 +8,7 @@ export default function UserForm({
   onCancel,
   loading,
   submitLabel,
-  showPasswordRequired = false, // Make this default to false
+  showPasswordRequired = false,
 }) {
   return (
     <section className="card form-container">

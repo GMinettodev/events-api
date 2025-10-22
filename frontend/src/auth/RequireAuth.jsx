@@ -7,7 +7,7 @@ export default function RequireAuth({ children }) {
   if (loading) {
     return (
       <div style={{ padding: 24 }}>
-        <p>Carregando sessão...</p>
+        <p>Loading session...</p>
       </div>
     );
   }
