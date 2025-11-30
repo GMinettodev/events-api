@@ -29,5 +29,8 @@
     "jsdoc": "^4.0.5",
     "nodemon": "^3.1.10"
   },
-  "description": ""
+  "description": "",
+  "prisma": {
+    "seed": "node prisma/runSeed.js"
+  }
 }
