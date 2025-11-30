@@ -1,11 +1,9 @@
-@baseURL = http://localhost:3000
+@baseURL = http://localhost:3000  
 @userId = 6
 @eventId = 7
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzYwNDk4NzY1LCJleHAiOjE3NjA1MDIzNjV9.9ZGJ11myAGVU1X--npf37LcSZhdpZkvSyKt3lckws88
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWQiOjMsImlhdCI6MTc2NDQ1MjcyNiwiZXhwIjoxNzY0NDU2MzI2fQ.Re1-vi88edyd4zSDZ9i_rOrNtxQWcchWeEiNB4Sgyds
 
-#########################
-##### Public routes #####
-#########################
+# --- Public routes ---
 
 ### Display Events
 GET {{baseURL}}/events/
@@ -32,10 +30,10 @@ Content-Type: application/json
 ### Register user
 POST {{baseURL}}/auth/register
 Content-Type: application/json
-'""
+
 {
     "name": "Jane Doe",
-    "email": "jane.doe@example.com",  
+    "email": "jane.doe@example.com",
     "password": "senha123",
     "role": "admin"
 }
@@ -61,16 +59,15 @@ Content-Type: application/json
     "password": "senha123"
 }
 
-##########################
-#### Protected routes ####
-##########################
+# --- Protected routes ---
 
-# ### Dashboard
-# GET {{baseURL}}/dashboard
-# Content-Type: application/json
-# Authorization: Bearer {{token}}
+# Dashboard
+### Dashboard
+GET {{baseURL}}/dashboard
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
-######### Events ########
+# Events
 
 ### Get event
 GET {{baseURL}}/events/
@@ -82,11 +79,11 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Community Clean-up",
-  "description": "Join us to clean the neighborhood park.",
-  "date": "2025-10-20",
-  "location": "Central Park",
-  "max_volunteers": "100"
+    "title": "Community Clean-up",
+    "description": "Join us to clean the neighborhood park.",
+    "date": "2025-12-20",
+    "location": "Central Park",
+    "max_volunteers": "100"
 }
 
 ### Update event
@@ -95,11 +92,11 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Updated Community Clean-up",
-  "description": "Join us to clean the downtown park.",
-  "date": "2025-10-22",
-  "location": "Downtown Park",
-  "max_volunteers": 120
+    "title": "Updated Community Clean-up",
+    "description": "Join us to clean the downtown park.",
+    "date": "2025-12-22",
+    "location": "Downtown Park",
+    "max_volunteers": 120
 }
 
 ### Delete event
@@ -107,7 +104,7 @@ DELETE {{baseURL}}/events/{{eventId}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-######### Users ########
+# Users
 
 ### Get users
 GET {{baseURL}}/users
@@ -125,10 +122,10 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Jane aaaaaa",
-  "email": "jane.3232@example.com",
-  "password": "newpassword123",
-  "role": "admin"
+    "name": "Jane aaaaaa",
+    "email": "jane.3232@example.com",
+    "password": "newpassword123",
+    "role": "admin"
 }
 
 ### Delete user

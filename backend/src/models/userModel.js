@@ -1,95 +1,92 @@
-const db = require('../config/database');
+const prisma = require('../config/prisma');
 
-/**
- * Model to interact with the 'users' table in the database.
- */
 class UserModel {
   /**
-   * Creates a new user in the database.
-   * @param {Object} user - Object containing user data.
-   * @param {string} user.name - User's name.
-   * @param {string} user.email - User's email.
-   * @param {string} user.password - User's password (already hashed).
-   * @param {string} [user.role='volunteer'] - User role (e.g. 'admin', 'volunteer').
-   * @returns {Promise<number>} ID of the newly created user.
+   * @description Creates a new user record.
+   * @param {object} userData - User data (name, email, password, role).
+   * @returns {Promise<number>} The ID of the newly created user.
    */
-  static async create(user) {
-    const { name, email, password, role = 'volunteer' } = user;
-    const [rows] = await db.query(
-      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, password, role]
-    );
-    return rows.insertId;
+  static async create(userData) {
+    const { name, email, password, role } = userData;
+    // CREATE - Inserting a new record
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password,
+        role,
+      },
+    });
+    return user.id;
   }
 
   /**
-   * Returns all registered users in the database.
-   * @returns {Promise<Array<Object>>} List of users with fields: id, name, email, and role.
+   * @description Retrieves all users.
+   * @returns {Promise<User[]>} An array of user objects (without password).
    */
   static async findAll() {
-    const [rows] = await db.query('SELECT id, name, email, role FROM users');
-    return rows;
+    // READ - Querying data
+    return await prisma.user.findMany({
+      // Select specific fields to omit the password
+      select: { id: true, name: true, email: true, role: true },
+    });
   }
 
   /**
-   * Finds a user by ID.
-   * @param {number} id - User ID.
-   * @returns {Promise<Object|null>} User object or null if not found.
+   * @description Finds a user by their unique ID.
+   * @param {number} id - The user's ID.
+   * @returns {Promise<User | null>} The user object or null if not found.
    */
   static async findById(id) {
-    const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
-    return rows[0];
+    return await prisma.user.findUnique({
+      // The PDF highlights that unique searches require 'where'
+      where: { id: parseInt(id) },
+    });
   }
 
   /**
-   * Finds a user by email.
-   * @param {string} email - User email.
-   * @returns {Promise<Object|null>} User object or null if not found.
+   * @description Finds a user by their unique email address.
+   * @param {string} email - The user's email.
+   * @returns {Promise<User | null>} The user object or null if not found.
    */
   static async findByEmail(email) {
-    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [
-      email,
-    ]);
-    return rows[0];
+    return await prisma.user.findUnique({
+      where: { email: email },
+    });
   }
 
   /**
-   * Updates a user's data.
-   * If a password is provided, it will be updated; otherwise, it remains unchanged.
-   * @param {number} id - ID of the user to update.
-   * @param {Object} user - Updated user data.
-   * @param {string} user.name - User's name.
-   * @param {string} user.email - User's email.
-   * @param {string} [user.password] - New password (if updating).
-   * @param {string} user.role - User role.
-   * @returns {Promise<Object>} Result of the update operation.
+   * @description Updates an existing user record by ID.
+   * @param {number} id - The user's ID.
+   * @param {object} userData - Data to update (e.g., name, email, role, password).
+   * @returns {Promise<User>} The updated user object.
    */
-  static async update(id, user) {
-    const { name, email, password, role } = user;
+  static async update(id, userData) {
+    // UPDATE - Updating records
+    // Prisma ignores undefined fields, so we build the object only with the incoming data
+    const dataToUpdate = {
+      name: userData.name,
+      email: userData.email,
+      role: userData.role,
+    };
+    if (userData.password) dataToUpdate.password = userData.password;
 
-    if (password) {
-      const [rows] = await db.query(
-        'UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id = ?',
-        [name, email, password, role, id]
-      );
-      return rows;
-    } else {
-      const [rows] = await db.query(
-        'UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?',
-        [name, email, role, id]
-      );
-      return rows;
-    }
+    return await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: dataToUpdate,
+    });
   }
 
   /**
-   * Removes a user from the database.
-   * @param {number} id - ID of the user to remove.
-   * @returns {Promise<Object>} Result of the delete operation.
+   * @description Deletes a user record by ID.
+   * @param {number} id - The user's ID.
+   * @returns {Promise<User>} The deleted user object.
    */
   static async delete(id) {
-    const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
-    return result;
+    // DELETE - Deleting records
+    return await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
   }
 }
 

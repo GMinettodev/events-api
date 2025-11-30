@@ -1,149 +1,103 @@
 const EventModel = require('../models/eventModel');
 const UserModel = require('../models/userModel');
 const createError = require('http-errors');
-
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
-/**
- * Formats a date to the MySQL accepted format: 'YYYY-MM-DD HH:mm:ss'
- * @param {Date|string} date - The date to format.
- * @returns {string} Formatted date for MySQL.
- */
-function formatDateForMySQL(date) {
-  return dayjs.utc(date).format('YYYY-MM-DD HH:mm:ss');
-}
-
-/**
- * Service layer for managing events.
- */
 class EventService {
   /**
-   * Retrieves all events.
-   * @returns {Promise<Array<Object>>} List of event objects.
+   * @description Retrieves all events from the Model.
+   * @returns {Promise<Event[]>} An array of all events.
    */
   static async getEvents() {
-    return EventModel.findAll();
+    return EventModel.findAll(); 
   }
 
   /**
-   * Creates a new event.
-   * @param {Object} eventData - Event data to create.
-   * @param {string} eventData.name - Name of the event.
-   * @param {string|Date} eventData.date - Date of the event.
-   * @param {string} [eventData.description] - Optional description of the event.
-   * @param {string|number} userId - ID of the user creating the event.
-   * @throws {HttpError} Throws error if validation fails.
-   * @returns {Promise<number>} ID of the newly created event.
+   * @description Creates a new event, including date validation.
+   * @param {object} eventData - Event data.
+   * @param {number} userId - The ID of the user creating the event.
+   * @returns {Promise<{insertedId: number}>} The ID of the created event.
    */
   static async createEvent(eventData, userId) {
-    if (!userId) {
-      throw createError(404, 'User ID is required to create an event');
-    }
+    if (!userId) throw createError(404, 'User ID is required');
 
+    // Date Validation
     const eventDate = dayjs.utc(eventData.date).startOf('day');
     const today = dayjs.utc().startOf('day');
 
-    if (!eventDate.isValid()) {
-      throw createError(400, 'Invalid event date format');
-    }
-
-    if (eventDate.isBefore(today)) {
-      throw createError(400, 'Event date cannot be in the past');
-    }
+    if (!eventDate.isValid()) throw createError(400, 'Invalid date');
+    if (eventDate.isBefore(today)) throw createError(400, 'Date cannot be in past');
 
     const eventToCreate = {
       ...eventData,
-      date: formatDateForMySQL(eventDate),
-      created_by: userId,
-      created_at: new Date(),
+      // Prisma expects a native JS Date object, not a formatted string
+      date: eventDate.toDate(), 
+      created_by: userId, // This field is mapped to 'createdById' in the Model
     };
 
     const insertedId = await EventModel.create(eventToCreate);
-
     return insertedId;
   }
 
   /**
-   * Updates an existing event.
-   * @param {string|number} id - ID of the event to update.
-   * @param {Object} eventData - Event data to update.
-   * @param {string|Date} [eventData.date] - New date for the event.
-   * @param {string} [eventData.name] - New name for the event.
-   * @param {string} [eventData.description] - New description.
-   * @param {string|number} userId - ID of the user performing the update.
-   * @throws {HttpError} Throws error if validation fails or event not found.
-   * @returns {Promise<Object>} The updated event object.
+   * @description Updates an existing event, including permission check and date validation.
+   * @param {number} id - The event's ID.
+   * @param {object} eventData - Data to update.
+   * @param {number} userId - The ID of the user performing the update (not used for permission here, but useful for context).
+   * @returns {Promise<Event>} The updated event object.
    */
   static async updateEvent(id, eventData, userId) {
-    if (!userId) {
-      throw createError(401, 'User ID is required to update an event');
-    }
-
     const existingEvent = await EventModel.findById(id);
-    if (!existingEvent) {
-      throw createError(404, 'Event not found');
-    }
+    if (!existingEvent) throw createError(404, 'Event not found');
 
-    const { created_at, created_by, ...fieldsToUpdate } = eventData;
+    const fieldsToUpdate = { ...eventData };
 
     if (fieldsToUpdate.date) {
       const eventDate = dayjs.utc(fieldsToUpdate.date).startOf('day');
       const today = dayjs.utc().startOf('day');
-
-      if (!eventDate.isValid()) {
-        throw createError(400, 'Invalid event date format');
-      }
-
-      if (eventDate.isBefore(today)) {
-        throw createError(400, 'Event date cannot be in the past');
-      }
-
-      fieldsToUpdate.date = formatDateForMySQL(eventDate);
+      if (eventDate.isBefore(today)) throw createError(400, 'Date cannot be in past');
+      
+      // Convert to Date object for Prisma
+      fieldsToUpdate.date = eventDate.toDate();
     }
 
-    const updatedEvent = await EventModel.update(id, fieldsToUpdate);
+    // Remove fields that should not be directly updated (managed by the DB/Prisma)
+    delete fieldsToUpdate.created_at;
+    delete fieldsToUpdate.created_by;
 
-    return updatedEvent;
+    return await EventModel.update(id, fieldsToUpdate);
   }
 
   /**
-   * Lists events with user info for the dashboard.
-   * @returns {Promise<Array<Object>>} List of events with associated user details.
+   * @description Retrieves all events for the dashboard view.
+   * @returns {Promise<Event[]>} An array of events with creator details.
    */
   static async listEventsForDashboard() {
-    return EventModel.getAllEventsWithUser();
+    // The Model already includes the creator details
+    return EventModel.findAll(); 
   }
 
   /**
-   * Deletes an event.
-   * @param {string|number} id - ID of the event to delete.
-   * @param {string} userEmail - Email of the user attempting the deletion.
-   * @throws {HttpError} Throws error if unauthorized or if entities not found.
-   * @returns {Promise<Object>} Confirmation message.
+   * @description Deletes an event, including permission check.
+   * @param {number} id - The event's ID.
+   * @param {string} userEmail - The email of the user attempting to delete the event.
+   * @returns {Promise<{message: string}>} Success message.
    */
   static async deleteEvent(id, userEmail) {
-    if (!userEmail) {
-      throw createError(401, 'User email is required to delete an event');
-    }
-
-    const existingEvent = await EventModel.findById(id);
-    if (!existingEvent) {
-      throw createError(404, 'Event not found');
-    }
+    const existingEvent = await EventModel.findById(id); 
+    if (!existingEvent) throw createError(404, 'Event not found');
 
     const user = await UserModel.findByEmail(userEmail);
-    if (!user) {
-      throw createError(404, 'User not found');
-    }
-
-    if (existingEvent.created_by !== user.id && user.role !== 'admin') {
-      throw createError(403, 'You are not authorized to delete this event');
+    
+    // Permission Check (Business Logic)
+    // Checks if the user is the creator (using createdById from Prisma) OR is an admin
+    if (existingEvent.createdById !== user.id && user.role !== 'admin') {
+      throw createError(403, 'Unauthorized');
     }
 
     await EventModel.delete(id);
-
     return { message: 'Event deleted successfully' };
   }
 }

@@ -1,103 +1,84 @@
-const db = require('../config/database');
+const prisma = require('../config/prisma');
 
-/**
- * Model to interact with the 'events' table in the database.
- */
 class EventModel {
   /**
-   * Retrieves all events from the database.
-   * @returns {Promise<Array>} Array of event objects.
+   * @description Retrieves all events ordered by date ascending.
+   * @returns {Promise<Event[]>} An array of event objects.
    */
   static async findAll() {
-    const [rows] = await db.query('SELECT * FROM events');
-    return rows;
+    // READ with Ordering
+    return await prisma.event.findMany({
+      orderBy: { date: 'asc' },
+      // Include to fetch related data (Join), as seen in section 5.2
+      include: {
+        creator: {
+          select: { name: true, email: true },
+        },
+      },
+    });
   }
 
   /**
-   * Creates a new event in the database.
-   * @param {Object} event - Event data.
-   * @param {string} event.title - Event title.
-   * @param {string} event.description - Event description.
-   * @param {string|Date} event.date - Event date.
-   * @param {string} event.location - Event location.
-   * @param {number} [event.max_volunteers=50] - Max volunteers allowed.
-   * @param {number} event.created_by - ID of user who created the event.
+   * @description Creates a new event record.
+   * @param {object} eventData - Data required for event creation.
    * @returns {Promise<number>} The ID of the newly created event.
    */
-  static async create(event) {
-    const {
-      title,
-      description,
-      date,
-      location,
-      max_volunteers = 50,
-      created_by,
-    } = event;
-
-    const [rows] = await db.query(
-      'INSERT INTO events (title, description, date, location, max_volunteers, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
-      [title, description, date, location, max_volunteers, created_by]
-    );
-
-    return rows.insertId;
+  static async create(eventData) {
+    // The PDF shows how to connect relations using 'data'
+    const event = await prisma.event.create({
+      data: {
+        title: eventData.title,
+        description: eventData.description,
+        date: eventData.date, // Prisma accepts native JS Date object
+        location: eventData.location,
+        max_volunteers: parseInt(eventData.max_volunteers),
+        // Connect the relationship manually by ID (created_by from service layer maps to createdById in schema)
+        createdById: parseInt(eventData.created_by),
+      },
+    });
+    return event.id;
   }
 
   /**
-   * Retrieves all events with creator user info.
-   * @returns {Promise<Array>} Array of events with user data.
-   */
-  static async getAllEventsWithUser() {
-    const [rows] = await db.query(`
-      SELECT 
-        e.id, e.title, e.description, e.date, e.location, e.max_volunteers, 
-        u.name AS created_by_name, u.email AS created_by_email
-      FROM events e
-      LEFT JOIN users u ON e.created_by = u.id
-      ORDER BY e.date ASC
-    `);
-    return rows;
-  }
-
-  /**
-   * Finds an event by its ID.
-   * @param {number|string} id - Event ID.
-   * @returns {Promise<Object|null>} Event object or null if not found.
+   * @description Finds an event by its unique ID.
+   * @param {number} id - The event's ID.
+   * @returns {Promise<Event | null>} The event object or null if not found.
    */
   static async findById(id) {
-    const [rows] = await db.query('SELECT * FROM events WHERE id = ?', [id]);
-    return rows[0] || null;
+    return await prisma.event.findUnique({
+      where: { id: parseInt(id) },
+      include: { creator: { select: { name: true, email: true } } },
+    });
   }
 
   /**
-   * Updates an event by ID.
-   * @param {number|string} id - Event ID.
-   * @param {Object} event - Event data to update.
-   * @param {string} event.title - Event title.
-   * @param {string} event.description - Event description.
-   * @param {string|Date} event.date - Event date.
-   * @param {string} event.location - Event location.
-   * @param {number} event.max_volunteers - Max volunteers allowed.
-   * @returns {Promise<Object>} Result of the update query.
+   * @description Updates an existing event record by ID.
+   * @param {number} id - The event's ID.
+   * @param {object} eventData - Data to update (e.g., title, description, date).
+   * @returns {Promise<Event>} The updated event object.
    */
-  static async update(id, event) {
-    const { title, description, date, location, max_volunteers } = event;
-
-    const [rows] = await db.query(
-      'UPDATE events SET title = ?, description = ?, date = ?, location = ?, max_volunteers = ? WHERE id = ?',
-      [title, description, date, location, max_volunteers, id]
-    );
-
-    return rows;
+  static async update(id, eventData) {
+    return await prisma.event.update({
+      where: { id: parseInt(id) },
+      data: {
+        title: eventData.title,
+        description: eventData.description,
+        date: eventData.date,
+        location: eventData.location,
+        max_volunteers: parseInt(eventData.max_volunteers),
+      },
+    });
   }
 
   /**
-   * Deletes an event by ID.
-   * @param {number|string} id - Event ID.
-   * @returns {Promise<Object>} Result of the delete query.
+   * @description Deletes an event record by ID.
+   * @param {number} id - The event's ID.
+   * @returns {Promise<Event>} The deleted event object.
    */
   static async delete(id) {
-    const [result] = await db.query('DELETE FROM events WHERE id = ?', [id]);
-    return result;
+    return await prisma.event.delete({
+      where: { id: parseInt(id) },
+    });
   }
 }
 

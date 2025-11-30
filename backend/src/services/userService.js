@@ -1,168 +1,102 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const UserModel = require('../models/userModel');
+const bcrypt = require('bcryptjs');
 const createError = require('http-errors');
 
-/**
- * Service layer for user management.
- */
 class UserService {
-  /** Valid user roles */
-  /** @type {string[]} */
-  static validRoles = ['volunteer', 'admin'];
-
   /**
-   * Checks if a role is valid.
-   * @param {string} role - The role to validate.
-   * @returns {boolean} True if role is valid, false otherwise.
-   */
-  static isRoleValid(role) {
-    return UserService.validRoles.includes(role);
-  }
-
-  /**
-   * Registers a new user.
-   * @param {Object} user - User data.
-   * @param {string} user.name - User's name.
-   * @param {string} user.email - User's email.
-   * @param {string} user.password - User's password.
-   * @param {string} [user.role='volunteer'] - User's role.
-   * @throws {HttpError} Throws if user already exists or role is invalid.
+   * @description Registers a new user, including checking for existence and hashing the password.
+   * @param {object} userData - User registration data.
    * @returns {Promise<{message: string, id: number}>} Success message and new user ID.
    */
-  static async registerUser(user) {
-    const { name, email, password, role = 'volunteer' } = user;
+  static async registerUser(userData) {
+    const existing = await UserModel.findByEmail(userData.email);
+    if (existing) throw createError(400, 'User already exists');
 
-    const existing = await UserModel.findByEmail(email);
-    if (existing) {
-      throw createError(400, 'User already exists');
-    }
-
-    if (user.role && !UserService.isRoleValid(user.role)) {
-      throw createError(400, `Invalid role: ${role}`);
-    }
-
-    const hashed = await bcrypt.hash(password, 10);
-    user.password = hashed;
-
-    const id = await UserModel.create(user);
-
+    // Business rule: Password hashing remains here
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    
+    const newUser = { ...userData, password: hashedPassword };
+    
+    // Call the Model (now using Prisma)
+    const id = await UserModel.create(newUser);
     return { message: 'User created successfully', id };
   }
 
   /**
-   * Authenticates user and returns JWT token.
-   * @param {Object} credentials - User credentials.
-   * @param {string} credentials.email - User email.
-   * @param {string} credentials.password - User password.
-   * @throws {HttpError} Throws if user not found or password is invalid.
-   * @returns {Promise<{token: string, user: {email: string, role: string}}>} JWT token and user info.
+   * @description Handles user login by checking credentials and generating a JWT.
+   * @param {object} credentials - User email and password.
+   * @returns {Promise<{token: string, user: object}>} JWT and basic user info.
    */
   static async loginUser({ email, password }) {
     const user = await UserModel.findByEmail(email);
-    if (!user) {
-      throw createError(404, 'User not found');
-    }
+    if (!user) throw createError(404, 'User not found');
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      throw createError(400, 'Invalid password');
-    }
+    if (!valid) throw createError(400, 'Invalid password');
 
+    // JWT logic remains the same
+    const jwt = require('jsonwebtoken'); 
     const token = jwt.sign(
-      {
-        email: user.email,
-        role: user.role,
-      },
+      { email: user.email, role: user.role, id: user.id },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    return {
-      token,
-      user: {
-        email: user.email,
-        role: user.role,
-      },
-    };
+    return { token, user: { email: user.email, role: user.role, id: user.id } };
   }
 
   /**
-   * Updates an existing user.
-   * @param {string|number} id - User ID.
-   * @param {Object} user - User data to update.
-   * @param {string} [user.name] - New name.
-   * @param {string} [user.email] - New email.
-   * @param {string} [user.password] - New password.
-   * @param {string} [user.role] - New role.
-   * @throws {HttpError} Throws if role is invalid or user not found.
-   * @returns {Promise<{message: string, id: string|number}>} Success message and user ID.
-   */
-  static async changeUser(id, user) {
-    const { name, email, password, role } = user;
-
-    if (role && !UserService.isRoleValid(role)) {
-      throw createError(400, `Invalid role: ${role}`);
-    }
-
-    let hashed;
-    if (password) {
-      hashed = await bcrypt.hash(password, 10);
-    }
-
-    const updateData = {
-      name,
-      email,
-      role,
-    };
-    if (hashed) {
-      updateData.password = hashed;
-    }
-
-    const result = await UserModel.update(id, updateData);
-
-    if (result.affectedRows === 0) {
-      throw createError(404, 'User not found');
-    }
-
-    return { message: 'User updated successfully', id };
-  }
-
-  /**
-   * Retrieves a list of all users.
-   * @returns {Promise<Array<Object>>} List of users.
+   * @description Retrieves a list of all users.
+   * @returns {Promise<User[]>} Array of user objects.
    */
   static async listUsers() {
     return UserModel.findAll();
   }
 
   /**
-   * Retrieves a single user by ID.
-   * @param {string|number} id - User ID.
-   * @throws {HttpError} Throws if user not found.
-   * @returns {Promise<Object>} User object.
+   * @description Retrieves a single user by ID, omitting the password.
+   * @param {number} id - The user's ID.
+   * @returns {Promise<object>} User data without password.
    */
   static async listUser(id) {
     const user = await UserModel.findById(id);
-    if (!user) {
-      throw createError(404, 'User not found');
-    }
-    return user;
+    if (!user) throw createError(404, 'User not found');
+    
+    // Use destructuring to omit the password field
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   /**
-   * Deletes a user by ID.
-   * @param {string|number} id - User ID.
-   * @throws {HttpError} Throws if user not found.
+   * @description Updates a user's information.
+   * @param {number} id - The user's ID.
+   * @param {object} userData - Data to update.
+   * @returns {Promise<{message: string}>} Success message.
+   */
+  static async changeUser(id, userData) {
+    // Rule from PDF section 3.5: Check existence before updating
+    const existing = await UserModel.findById(id);
+    if (!existing) throw createError(404, 'User not found');
+
+    if (userData.password) {
+      // Hash the password if a new one is provided
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+    await UserModel.update(id, userData);
+    return { message: 'User updated successfully' };
+  }
+
+  /**
+   * @description Deletes a user.
+   * @param {number} id - The user's ID.
    * @returns {Promise<{message: string}>} Success message.
    */
   static async removeUser(id) {
-    const result = await UserModel.delete(id);
+    // Rule from PDF section 3.6: Check existence before deleting
+    const existing = await UserModel.findById(id);
+    if (!existing) throw createError(404, 'User not found');
 
-    if (result.affectedRows === 0) {
-      throw createError(404, 'User not found');
-    }
-
+    await UserModel.delete(id);
     return { message: 'User deleted successfully' };
   }
 }
