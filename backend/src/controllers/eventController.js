@@ -111,9 +111,10 @@ class EventController {
       const { id } = req.params;
 
       // Call the service to delete the event
-      const result = await EventService.deleteEvent(id, userEmail);
+      await EventService.deleteEvent(id, userEmail);
 
-      res.status(200).json(result);
+      // FIX: Use 204 (No Content) for successful DELETE operations
+      res.status(204).send(); // <-- Correct status code for DELETE without content
     } catch (err) {
       next(err);
     }

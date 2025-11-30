@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+
 /**
  * Controller responsible for handling requests related to the user dashboard.
  */

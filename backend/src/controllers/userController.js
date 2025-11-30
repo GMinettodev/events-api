@@ -6,18 +6,17 @@ const UserService = require('../services/userService');
  */
 class UserController {
   /**
-   * Registers a new user.
-   * @param {Object} req - Express request object, expects user data in req.body.
-   * @param {Object} res - Express response object.
-   * @param {Function} next - Express next middleware function for error handling.
-   * @returns {Promise<void>} JSON response with registration result.
+   * @description Registers a new user.
+   * @route POST /auth/register
    */
   static async register(req, res, next) {
     try {
-      const result = await UserService.registerUser(req.body);
-      return res.json(result);
-    } catch (err) {
-      return next(err);
+      const userData = req.body;
+      const result = await UserService.registerUser(userData);
+
+      return res.status(201).json(result);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -87,20 +86,17 @@ class UserController {
   }
 
   /**
-   * Deletes a user by ID.
-   * @param {Object} req - Express request object, expects user ID in req.params.id.
-   * @param {Object} res - Express response object.
-   * @param {Function} next - Express next middleware function for error handling.
-   * @returns {Promise<void>} JSON response confirming deletion.
+   * @description Deletes a user by ID. Requires 'admin' role.
+   * @route DELETE /users/:id
    */
   static async removeUser(req, res, next) {
-    const { id } = req.params;
-
     try {
-      const result = await UserService.removeUser(id);
-      return res.status(200).json(result);
-    } catch (err) {
-      return next(err);
+      const { id } = req.params;
+      await UserService.removeUser(id);
+
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
     }
   }
 }

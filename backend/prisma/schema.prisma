@@ -1,4 +1,3 @@
-// backend/prisma/schema.prisma
 // Configuração validada para Prisma v6.15.0 e MySQL
 
 generator client {

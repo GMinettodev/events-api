@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {
-  authenticateToken,
-  authorizeRole,
-} = require('../middlewares/authMiddleware.js');
+const { authenticateToken } = require('../middlewares/authMiddleware.js');
 const EventController = require('../controllers/EventController');
 
 // Public routes
