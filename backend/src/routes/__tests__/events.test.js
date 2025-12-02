@@ -109,7 +109,6 @@ describe('Event Routes Integration Tests', () => {
       .send(updateData);
 
     expect(response.statusCode).toBe(200);
-    // FIX: Assert on response.body.event.title because the controller nests the event object
     expect(response.body.event).toHaveProperty('title', 'Updated Title');
   });
 
@@ -128,7 +127,6 @@ describe('Event Routes Integration Tests', () => {
       .delete(`/events/${createdEventId}`)
       .set('Authorization', `Bearer ${adminToken}`);
 
-    // FIX NOTE: Controller should return 204 (No Content) for a successful DELETE
     expect(response.statusCode).toBe(204);
   });
 });

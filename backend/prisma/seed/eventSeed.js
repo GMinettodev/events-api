@@ -1,5 +1,3 @@
-// prisma/seed/eventSeed.js
-
 /**
  * @description Creates initial events linked to the provided user objects.
  * @param {PrismaClient} prisma - The Prisma client instance.

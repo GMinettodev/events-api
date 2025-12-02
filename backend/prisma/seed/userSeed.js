@@ -1,4 +1,3 @@
-// prisma/seed/userSeed.js
 const bcrypt = require('bcryptjs');
 
 /**
@@ -13,7 +12,7 @@ async function userSeed(prisma) {
 
   console.log('Seeding users...');
 
-  // Clean up existing users (optional)
+  // Clean up existing users
   await prisma.user.deleteMany();
 
   const adminUser = await prisma.user.create({

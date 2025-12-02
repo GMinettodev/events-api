@@ -7,7 +7,6 @@ const { PrismaClient } = require('@prisma/client');
  */
 const prisma = new PrismaClient();
 
-// Recommendation: Gracefully shut down the Prisma Client before exiting the application
 process.on('beforeExit', async () => {
   await prisma.$disconnect();
 });

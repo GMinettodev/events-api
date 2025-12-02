@@ -18,12 +18,10 @@ let volunteerToken = '';
 let adminToken = '';
 
 beforeAll(async () => {
-  // 1. Garante que os usuários existem e limpa o estado
   await prisma.user.deleteMany({
     where: { email: { in: [VOLUNTEER_USER.email, ADMIN_USER.email] } },
   });
 
-  // Registra ambos os usuários
   await request(app).post('/auth/register').send(VOLUNTEER_USER);
   await request(app).post('/auth/register').send(ADMIN_USER);
 
@@ -48,14 +46,12 @@ afterAll(async () => {
 });
 
 describe('Dashboard Routes', () => {
-  // --- ROTA PÚBLICA (GET /) ---
   it('should allow access to GET / (Public Route) without token', async () => {
     const response = await request(app).get('/protected/');
     expect(response.statusCode).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
   });
 
-  // --- ROTA PROTEGIDA (GET /dashboard) ---
   it('should return 401 if trying to access /dashboard without token', async () => {
     const response = await request(app).get('/protected/dashboard');
     expect(response.statusCode).toBe(401);

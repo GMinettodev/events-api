@@ -1,10 +1,10 @@
 const winston = require('winston');
-// Formato base: adiciona timestamp e captura stack de erros
+
 const baseFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.errors({ stack: true }) // mostra o stack trace em erros
+  winston.format.errors({ stack: true }) 
 );
-// Formato para ambiente de desenvolvimento (colorido e legível)
+
 const devConsoleFormat = winston.format.combine(
   baseFormat,
   winston.format.colorize({ all: true }),
@@ -16,27 +16,24 @@ const devConsoleFormat = winston.format.combine(
   })
 );
 
-// Criação do logger principal
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info', // nível mínimo de log
-  format: baseFormat, // formato padrão
+  level: process.env.LOG_LEVEL || 'info',
+  format: baseFormat,
   transports: [
-    // Transporte 1: saída no console (ideal para desenvolvimento e produção)
     new winston.transports.Console({
       format:
         process.env.NODE_ENV === 'development'
           ? devConsoleFormat
           : winston.format.json(),
     }),
-    // Transporte 2: grava logs em arquivo local (opcional)
     new winston.transports.File({
       filename: 'logs/app.log',
       format: winston.format.json(),
       level: 'info',
-      maxsize: 5 * 1024 * 1024, // 5 MB
-      maxFiles: 3, // mantém até 3 arquivos de log
+      maxsize: 5 * 1024 * 1024,
+      maxFiles: 3, 
     }),
   ],
 });
-// Exporta o logger para uso em outros módulos
+
 module.exports = { logger };

@@ -1,19 +1,12 @@
-// Configuração validada para Prisma v6.15.0 e MySQL
-
 generator client {
-  // Provider padrão e correto para Node.js na v6
   provider = "prisma-client-js" 
 }
 
 datasource db {
-  // Provider: MySQL
-  provider = "mysql"
-  
-  // SINTAXE CORRETA: usa a função env() para ler a variável COMPLETA do .env
+  provider = "mysql"  
   url      = env("DATABASE_URL")
 }
 
-// Modelo User (Usuários)
 model User {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(255)
@@ -27,7 +20,6 @@ model User {
   @@map("users")
 }
 
-// Modelo Event (Eventos de Voluntariado)
 model Event {
   id             Int      @id @default(autoincrement())
   title          String   @db.VarChar(150)

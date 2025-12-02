@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
-// 1. Mock das Dependências
 jest.mock('../../models/userModel');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
@@ -15,7 +14,7 @@ jest.mock('http-errors', () => {
 
 describe('UserService Unit Tests', () => {
   afterEach(() => {
-    jest.clearAllMocks(); // Limpa contadores de chamadas após cada teste
+    jest.clearAllMocks();
   });
 
   // --- TESTES DE REGISTRO ---
@@ -27,11 +26,8 @@ describe('UserService Unit Tests', () => {
         password: '123',
       };
 
-      // Mock: Usuário não existe
       UserModel.findByEmail.mockResolvedValue(null);
-      // Mock: Hash da senha
       bcrypt.hash.mockResolvedValue('hashed_123');
-      // Mock: Criação retorna ID 1
       UserModel.create.mockResolvedValue({ id: 1 });
 
       const result = await UserService.registerUser(userData);
@@ -56,7 +52,7 @@ describe('UserService Unit Tests', () => {
     });
   });
 
-  // --- TESTES DE LOGIN ---
+  // --- LOGIN TESTS---
   describe('loginUser', () => {
     it('should return token and user info on success', async () => {
       const credentials = { email: 'test@mail.com', password: '123' };
@@ -69,7 +65,7 @@ describe('UserService Unit Tests', () => {
 
       // Mocks
       UserModel.findByEmail.mockResolvedValue(mockUser);
-      bcrypt.compare.mockResolvedValue(true); // Senha correta
+      bcrypt.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue('fake_jwt_token');
 
       const result = await UserService.loginUser(credentials);
@@ -88,7 +84,7 @@ describe('UserService Unit Tests', () => {
     it('should throw 400 if password does not match', async () => {
       const mockUser = { password: 'hashed_123' };
       UserModel.findByEmail.mockResolvedValue(mockUser);
-      bcrypt.compare.mockResolvedValue(false); // Senha errada
+      bcrypt.compare.mockResolvedValue(false);
 
       await expect(
         UserService.loginUser({ email: 'test@mail.com', password: 'wrong' })
@@ -96,7 +92,7 @@ describe('UserService Unit Tests', () => {
     });
   });
 
-  // --- TESTES DE LEITURA (ListUser) ---
+  // --- READ TESTS (ListUser) ---
   describe('listUser', () => {
     it('should return user without password', async () => {
       const mockDbUser = { id: 1, name: 'Test', password: 'secret_hash' };
@@ -105,7 +101,7 @@ describe('UserService Unit Tests', () => {
       const result = await UserService.listUser(1);
 
       expect(result).toHaveProperty('name', 'Test');
-      expect(result).not.toHaveProperty('password'); // Garante que a senha foi removida
+      expect(result).not.toHaveProperty('password');
     });
   });
 });

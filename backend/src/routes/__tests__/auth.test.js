@@ -24,7 +24,6 @@ describe('POST /auth/register', () => {
   it('should register a new user (admin) successfully', async () => {
     const response = await request(app).post('/auth/register').send(mockAdmin);
 
-    // Checks the HTTP Status 201 (Created)
     expect(response.statusCode).toBe(201);
     expect(response.body).toHaveProperty(
       'message',
@@ -59,7 +58,7 @@ describe('POST /auth/login', () => {
   it('should return 400 for invalid password', async () => {
     const response = await request(app).post('/auth/login').send({
       email: mockAdmin.email,
-      password: 'wrongpassword', // Wrong password
+      password: 'wrongpassword',
     });
 
     expect(response.statusCode).toBe(400);

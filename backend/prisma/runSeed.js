@@ -1,4 +1,3 @@
-// prisma/runSeed.js
 const { PrismaClient } = require('@prisma/client');
 const userSeed = require('./seed/userSeed');
 const eventSeed = require('./seed/eventSeed');
