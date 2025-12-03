@@ -8,6 +8,7 @@ This is a RESTful API developed with NodeJS, Express, MySQL and React. It enable
     Node.js
     Express
     MySQL
+    Prisma
     React
 
 ## 🗃️Database schema
@@ -36,30 +37,30 @@ The database consists of the following collections:
 ### Clone the repository
 
 git clone https://github.com/GMinettodev/events-api.git
+
 cd events-api
 
 ### Install the dependencies
 
 npm install
-
-### Configure the web environment
-
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+cd backend
+npm install
+cd ../frontend
+npm install
 
 ### Edit the .env with the settings of your MySQL
 
-### Create the database and the tables
-
-mysql -u root
-source backend/src/database/create_database.sql
-source backend/src/database/create_tables.sql
-source backend/src/database/seed_data.sql
+### Configure the web environment
+npx prisma migrate dev
+npx prisma db seed
+npx prisma studio
 
 ### Run the application
 
+cd backend
 npm run dev
-
+cd frontend
+npm run dev
 
 ## 📑 Documentation
 
