@@ -43,23 +43,33 @@ cd events-api
 ### Install the dependencies
 
 npm install
+
 cd backend
+
 npm install
+
 cd ../frontend
+
 npm install
 
 ### Edit the .env with the settings of your MySQL
 
 ### Configure the web environment
+
 npx prisma migrate dev
+
 npx prisma db seed
+
 npx prisma studio
 
 ### Run the application
 
 cd backend
+
 npm run dev
+
 cd frontend
+
 npm run dev
 
 ## 📑 Documentation
